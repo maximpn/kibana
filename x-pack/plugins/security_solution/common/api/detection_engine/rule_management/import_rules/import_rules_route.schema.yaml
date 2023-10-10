@@ -8,6 +8,7 @@ paths:
     post:
       operationId: ImportRules
       x-codegen-enabled: true
+      x-implementation-path: x-pack/plugins/security_solution/server/lib/detection_engine/rule_management/api/rules/import_rules
       summary: Import rules
       description: Imports rules from an `.ndjson` file, including actions and exception lists.
       tags:

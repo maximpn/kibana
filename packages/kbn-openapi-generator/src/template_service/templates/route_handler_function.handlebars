@@ -1,0 +1,15 @@
+/*
+ * Copyright Elasticsearch B.V. and/or licensed to Elasticsearch B.V. under one
+ * or more contributor license agreements. Licensed under the Elastic License
+ * 2.0; you may not use this file except in compliance with the Elastic License
+ * 2.0.
+ */
+
+{{> disclaimer}}
+
+import type { Logger, RequestHandlerContext, KibanaRequest } from '@kbn/core/server';
+import { {{#if requestQuery}}{{operation.operationId}}RequestQueryInput,{{/if}} {{#if requestBody}}{{operation.operationId}}RequestBodyInput,{{/if}} {{operation.operationId}}Response } from '{{typesFilePath}}';
+
+export async function handle{{operation.operationId}}Request(context: RequestHandlerContext, request: KibanaRequest, logger: Logger): Promise<{{operation.operationId}}Response> {
+  // YOUR BUSINESS LOGIC GOES HERE
+};

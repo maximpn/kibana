@@ -1,0 +1,62 @@
+/*
+ * Copyright Elasticsearch B.V. and/or licensed to Elasticsearch B.V. under one
+ * or more contributor license agreements. Licensed under the Elastic License
+ * 2.0; you may not use this file except in compliance with the Elastic License
+ * 2.0.
+ */
+
+{{> disclaimer}}
+
+import type { IKibanaResponse, Logger } from '@kbn/core/server';
+import { SecuritySolutionPluginRouter } from '@kbn/security-solution-plugin/server/types';
+import { buildRouteValidation } from '@kbn/security-solution-plugin/server/utils/build_validation/route_validation';
+import { buildSiemResponse } from '@kbn/security-solution-plugin/server/lib/detection_engine/routes/utils';
+import { transformError } from '@kbn/securitysolution-es-utils';
+import { {{#if requestQuery}}{{operation.operationId}}RequestQueryInput,{{/if}} {{#if requestBody}}{{operation.operationId}}RequestBodyInput,{{/if}} {{operation.operationId}}Response } from '{{typesFilePath}}';
+import { handle{{operation.operationId}}Request } from './handle_{{snakeCase operation.operationId}}_request.gen';
+
+export const {{operation.operationId}}Route = (router: SecuritySolutionPluginRouter, logger: Logger) => {
+  router.versioned
+    .{{operation.method}}({
+      access: 'public',
+      path: '{{operation.path}}',
+      options: {
+        tags: ['access:securitySolution'],
+      },
+    })
+    .addVersion(
+      {
+        version: '2023-10-31',
+        validate: {{#if (or requestQuery requestBody)}}{
+          request: {
+            {{#if requestQuery}}
+            query: buildRouteValidation({{operation.operationId}}RequestQueryInput),
+            {{/if}}
+            {{#if requestBody}}
+            body: buildRouteValidation({{operation.operationId}}RequestBodyInput),
+            {{/if}}
+          },
+        },
+        {{else}}
+        false,
+        {{/if}}
+      },
+      async (context, request, response): Promise<IKibanaResponse<{{operation.operationId}}Response>> => {
+        const siemResponse = buildSiemResponse(response);
+
+        try {
+          const result = await handle{{operation.operationId}}Request(context, request, logger);
+
+          return response.ok({
+            body: result,
+          });
+        } catch (err) {
+          const error = transformError(err);
+          return siemResponse.error({
+            body: error.message,
+            statusCode: error.statusCode,
+          });
+        }
+      }
+    );
+};

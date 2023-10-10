@@ -8,6 +8,7 @@ paths:
     post:
       operationId: ExportRules
       x-codegen-enabled: true
+      x-implementation-path: x-pack/plugins/security_solution/server/lib/detection_engine/rule_management/api/rules/export_rules
       summary: Export rules
       description: Exports rules to an `.ndjson` file. The following configuration items are also included in the `.ndjson` file - Actions, Exception lists. Prebuilt rules cannot be exported.
       tags:

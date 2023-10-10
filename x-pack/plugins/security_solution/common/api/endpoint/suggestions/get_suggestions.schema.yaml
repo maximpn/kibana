@@ -8,6 +8,7 @@ paths:
       summary: Get suggestions
       operationId: GetEndpointSuggestions
       x-codegen-enabled: true
+      x-implementation-path: x-pack/plugins/security_solution/server/endpoint/routes/suggestions
       requestBody:
         required: true
         content:

@@ -8,16 +8,19 @@
 
 import Handlebars from 'handlebars';
 import { resolve } from 'path';
-import { GenerationContext } from '../parser/get_generation_context';
 import { registerHelpers } from './register_helpers';
 import { registerTemplates } from './register_templates';
 
-export const AVAILABLE_TEMPLATES = ['zod_operation_schema'] as const;
+export const AVAILABLE_TEMPLATES = [
+  'zod_operation_schema',
+  'route',
+  'route_handler_function',
+] as const;
 
 export type TemplateName = typeof AVAILABLE_TEMPLATES[number];
 
 export interface ITemplateService {
-  compileTemplate: (templateName: TemplateName, context: GenerationContext) => string;
+  compileTemplate: (templateName: TemplateName, context: Record<string, unknown>) => string;
 }
 
 /**
@@ -31,7 +34,7 @@ export const initTemplateService = async (): Promise<ITemplateService> => {
   const templates = await registerTemplates(resolve(__dirname, './templates'), handlebars);
 
   return {
-    compileTemplate: (templateName: TemplateName, context: GenerationContext) => {
+    compileTemplate: (templateName: TemplateName, context: Record<string, unknown>) => {
       return handlebars.compile(templates[templateName])(context);
     },
   };

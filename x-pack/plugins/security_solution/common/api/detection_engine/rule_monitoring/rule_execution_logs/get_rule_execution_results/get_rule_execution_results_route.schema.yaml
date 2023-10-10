@@ -7,6 +7,7 @@ paths:
     put:
       operationId: GetRuleExecutionResults
       x-codegen-enabled: true
+      x-implementation-path: x-pack/plugins/security_solution/server/lib/detection_engine/rule_monitoring/api/rule_execution_logs/get_rule_execution_results
       summary: Returns execution results of a given rule (aggregated by execution UUID) from Event Log.
       tags:
         - Rule Execution Log API

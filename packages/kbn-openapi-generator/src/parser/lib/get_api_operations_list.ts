@@ -75,6 +75,7 @@ export function getApiOperationsList(parsedSchema: OpenApiDocument): NormalizedO
         }
 
         const { operationId, description, tags, deprecated } = operation;
+        const implementationPath = operation['x-implementation-path'];
 
         // Operation ID is used as a prefix for the generated function names,
         // runtime schemas, etc. So it must be unique and not empty
@@ -99,6 +100,7 @@ export function getApiOperationsList(parsedSchema: OpenApiDocument): NormalizedO
           requestQuery,
           requestBody,
           response,
+          implementationPath,
         };
 
         return normalizedOperation;

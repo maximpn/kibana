@@ -13,6 +13,7 @@ interface AdditionalProperties {
    * Whether or not the route and its schemas should be generated
    */
   'x-codegen-enabled'?: boolean;
+  'x-implementation-path'?: string;
 }
 
 export type OpenApiDocument = OpenAPIV3.Document<AdditionalProperties>;
@@ -70,4 +71,5 @@ export interface NormalizedOperation {
   requestQuery?: NormalizedSchemaItem;
   requestBody?: NormalizedSchemaItem;
   response?: NormalizedSchemaItem;
+  implementationPath?: string;
 }

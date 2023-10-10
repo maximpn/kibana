@@ -17,6 +17,7 @@ export interface GenerationContext {
   components: OpenAPIV3.ComponentsObject | undefined;
   operations: NormalizedOperation[];
   imports: ImportsMap;
+  typesFilePath: string;
 }
 
 export function getGenerationContext(document: OpenApiDocument): GenerationContext {
@@ -30,5 +31,6 @@ export function getGenerationContext(document: OpenApiDocument): GenerationConte
     components,
     operations,
     imports,
+    typesFilePath: '',
   };
 }
