@@ -38,7 +38,7 @@ export const useInstalledSecurityJobs = (): UseInstalledSecurityJobsReturn => {
   const isMlUser = hasMlUserPermissions(mlCapabilities);
   const isLicensed = hasMlLicense(mlCapabilities);
 
-  const { isFetching, data: jobs = [] } = useFetchJobsSummaryQuery(
+  const { isFetching, data: jobs } = useFetchJobsSummaryQuery(
     {},
     {
       enabled: isMlUser && isLicensed,
@@ -48,7 +48,7 @@ export const useInstalledSecurityJobs = (): UseInstalledSecurityJobsReturn => {
     }
   );
 
-  const securityJobs = jobs.filter(isSecurityJob);
+  const securityJobs = useMemo(() => jobs?.filter(isSecurityJob) ?? [], [jobs]);
 
   return { isLicensed, isMlUser, jobs: securityJobs, loading: isFetching };
 };
