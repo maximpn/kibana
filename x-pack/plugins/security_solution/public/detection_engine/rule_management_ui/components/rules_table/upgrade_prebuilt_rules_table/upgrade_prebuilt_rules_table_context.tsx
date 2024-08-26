@@ -144,6 +144,109 @@ interface UpgradePrebuiltRulesTableContextProviderProps {
   children: React.ReactNode;
 }
 
+const upgradePrebuiltRuleMachine = createMachine<Context, Event>(
+  {
+    /** @xstate-layout N4IgpgJg5mDOIC5QFcAOUBOBDCYAKGYARsgJYA2ALgErLlwDEAIgIIAqLA+gKp6tsBRANoAGALqJQqAPaxSlUtIB2kkAE9EAWgDMATgAcAGhAAPRAEZdegHQBWWwBYAbPoDstgL4fjaTDnyEJBQ0dHDWpErypFjkpHJKUMzsXLz8wuKqMnIKyqpmCOauDtZOruZubtqu+g6uTsYaCNoATE4lrrquzSLm2iK22g6e3iC+2LgExGRUtPSw4ZEKMXERifxcADIA8ixMnALU1FvUohJIIFlRuef5hcWl5dWuVTV1DYjdtta6zZ2tXSIRLoHOZhj50OMAlNgrMwqQIPQGFs8AIAHKcACyW1YG1OmVkVxUN0Qul61lBTmatkpbhE+l07wQmicbQczUeYNGEP8kyCM1C8wAttIIDFONJUGAlAwAMLbADKAkx2JYuIy50uOSJoEaOnMIjsxluTnMbQG5ipXnBfgmgWmITm1mFovI4slSmshAAbqQwAB3VYMagCACK3AE8rYnGo3A2St4AHFqLt0mcpAStXkPs1tOSOi53Iyfq5rIMnNp9H0HLoa78rVybVC+Q6ws6xRKpZ6wD7-YHg2GI1GY3GeHgkymhOY0xcM4ptaZs7nCroC7ZGeWvmWK1Waz9dPWxjy7TCBU6Re33dYsH6sFEEpwAMbKABmpAwgqwWtlW1RADEAJLUBi0axvGY7Jkwqb4tkc5Zk05jFFS66VqWzjbiI1a1vuIyHra0L8o6oqUFgGzSDgqwCBgGDSBgSQcKOaR4hqs7XKA+TUuY1gODUFYIfYQx0oy5TNN85q2OylY1iITheCMSginAqi4U29qwvAzEwaxC5MiujI6AY1iAkZ2jaKUrjPCZB7cnhzZqQsUTLPEUDQYScG1Iy7IiTU5aVhhu7NPo+hWY2vKqae8L0C5mbEggXS6CU1JUjSrh0gy6gfGSpSdKa24tJSwWQqFJ6Om2rodvOmqwTFmjcYyzicWWIKVg41b6HSMk4dZKnFa255lZe3q+gGCRRVVbGICIjKOPo1jeehmF7gVR74S2Qp9W6nbXreCj3k+Sivu+n5jTOmnzvkk3pQgLi5luvkLXWnUhceBG9S6G0erhqyjVp52MvohSzWhd3+dh1qFc9q3WERJFkRAFFUTR31nYgvHWM0rTUiuTgiM0dTAh50lcb8XSlN0QIgsMXhAA */
+    id: 'upgradePrebuiltRules',
+    initial: 'initialising',
+    context: {
+      rules: [],
+      legacyJobsCount: -1,
+      currentRule: undefined,
+    },
+    on: {
+      DATA_UPDATE: { actions: 'updateData' },
+    },
+    states: {
+      initialising: {
+        on: {
+          DATA_UPDATE: {
+            actions: 'updateData',
+            target: 'idle',
+          },
+          DATA_LOAD_ERROR: 'dataLoadingError',
+        },
+      },
+      idle: {
+        on: {
+          OPEN_MODAL: {
+            target: 'modal_open',
+            cond: 'isRuleValid',
+            actions: 'setCurrentRule',
+          },
+        },
+      },
+      modal_open: {
+        initial: 'reviewing',
+        states: {
+          reviewing: {
+            on: {
+              REQUEST_RULE_UPGRADE: [
+                {
+                  target: 'awaiting_confirmation',
+                  cond: 'hasLegacyJobs',
+                },
+                {
+                  target: 'upgrading',
+                },
+              ],
+            },
+          },
+          awaiting_confirmation: {
+            on: {
+              CONFIRM_RULE_UPGRADE: 'upgrading',
+            },
+          },
+          upgrading: {
+            invoke: {
+              src: 'upgradeCurrentRule',
+            },
+          },
+        },
+        on: {
+          CLOSE_MODAL: {
+            target: 'idle',
+            actions: 'resetCurrentRule',
+          },
+        },
+      },
+      dataLoadingError: {
+        on: {
+          DATA_UPDATE: {
+            actions: 'updateData',
+            target: 'idle',
+          },
+        },
+      },
+    },
+  },
+  {
+    actions: {
+      updateData: assign({
+        rules: (_, event) => (event.type === 'DATA_UPDATE' ? event.rules : undefined),
+        legacyJobsCount: (_, event) =>
+          event.type === 'DATA_UPDATE'
+            ? event.jobs.filter((job) => affectedJobIds.includes(job.id)).length
+            : -1,
+      }),
+      setCurrentRule: assign({
+        currentRule: (context, event: AnyEventObject) =>
+          context.rules?.find((rule) => rule.id === event.ruleId),
+      }),
+      resetCurrentRule: assign({
+        currentRule: () => undefined,
+      }),
+    },
+    guards: {
+      isRuleValid: (context, event) =>
+        event.type === 'OPEN_MODAL'
+          ? context.rules?.some((rule) => rule.id === event.ruleId) ?? false
+          : false,
+      hasLegacyJobs: (context) => context.legacyJobsCount > 0,
+    },
+  }
+);
+
 export const UpgradePrebuiltRulesTableContextProvider = ({
   children,
 }: UpgradePrebuiltRulesTableContextProviderProps) => {
@@ -166,132 +269,32 @@ export const UpgradePrebuiltRulesTableContextProvider = ({
   const { mutateAsync: upgradeAllRulesRequest } = usePerformUpgradeAllRules();
   const { mutateAsync: upgradeSpecificRulesRequest } = usePerformUpgradeSpecificRules();
 
-  const upgradePrebuiltRuleMachine = createMachine<Context, Event>(
-    {
-      /** @xstate-layout N4IgpgJg5mDOIC5QFcAOUBOBDCYAKGYARsgJYA2ALgErLlwDEAIgIIAqLA+gKp6tsBRANoAGALqJQqAPaxSlUtIB2kkAE9EAWgDMATgAcAGhAAPRAEZdegHQBWWwBYAbPoDstgL4fjaTDnyEJBQ0dHDWpErypFjkpHJKUMzsXLz8wuKqMnIKyqpmCOauDtZOruZubtqu+g6uTsYaCNoATE4lrrquzSLm2iK22g6e3iC+2LgExGRUtPSw4ZEKMXERifxcADIA8ixMnALU1FvUohJIIFlRuef5hcWl5dWuVTV1DYjdtta6zZ2tXSIRLoHOZhj50OMAlNgrMwqQIPQGFs8AIAHKcACyW1YG1OmVkVxUN0Qul61lBTmatkpbhE+l07wQmicbQczUeYNGEP8kyCM1C8wAttIIDFONJUGAlAwAMLbADKAkx2JYuIy50uOSJoEaOnMIjsxluTnMbQG5ipXnBfgmgWmITm1mFovI4slSmshAAbqQwAB3VYMagCACK3AE8rYnGo3A2St4AHFqLt0mcpAStXkPs1tOSOi53Iyfq5rIMnNp9H0HLoa78rVybVC+Q6ws6xRKpZ6wD7-YHg2GI1GY3GeHgkymhOY0xcM4ptaZs7nCroC7ZGeWvmWK1Waz9dPWxjy7TCBU6Re33dYsH6sFEEpwAMbKABmpAwgqwWtlW1RADEAJLUBi0axvGY7Jkwqb4tkc5Zk05jFFS66VqWzjbiI1a1vuIyHra0L8o6oqUFgGzSDgqwCBgGDSBgSQcKOaR4hqs7XKA+TUuY1gODUFYIfYQx0oy5TNN85q2OylY1iITheCMSginAqi4U29qwvAzEwaxC5MiujI6AY1iAkZ2jaKUrjPCZB7cnhzZqQsUTLPEUDQYScG1Iy7IiTU5aVhhu7NPo+hWY2vKqae8L0C5mbEggXS6CU1JUjSrh0gy6gfGSpSdKa24tJSwWQqFJ6Om2rodvOmqwTFmjcYyzicWWIKVg41b6HSMk4dZKnFa255lZe3q+gGCRRVVbGICIjKOPo1jeehmF7gVR74S2Qp9W6nbXreCj3k+Sivu+n5jTOmnzvkk3pQgLi5luvkLXWnUhceBG9S6G0erhqyjVp52MvohSzWhd3+dh1qFc9q3WERJFkRAFFUTR31nYgvHWM0rTUiuTgiM0dTAh50lcb8XSlN0QIgsMXhAA */
-      id: 'upgradePrebuiltRules',
-      initial: 'initialising',
-      context: {
-        rules: [],
-        legacyJobsCount: -1,
-        currentRule: undefined,
-      },
-      on: {
-        DATA_UPDATE: { actions: 'updateData' },
-      },
-      states: {
-        initialising: {
-          on: {
-            DATA_UPDATE: {
-              actions: 'updateData',
-              target: 'idle',
+  const [machineState, sendToMachine] = useMachine(upgradePrebuiltRuleMachine, {
+    devTools: true,
+    services: {
+      upgradeCurrentRule: (context) => async (send) => {
+        if (!context.currentRule) {
+          return;
+        }
+
+        const ruleId = context.currentRule?.rule_id;
+
+        try {
+          await upgradeSpecificRulesRequest([
+            {
+              rule_id: ruleId,
+              version:
+                context.currentRule.diff.fields.version?.target_version ??
+                context.currentRule.current_rule.version,
+              revision: context.currentRule.revision,
             },
-            DATA_LOAD_ERROR: 'dataLoadingError',
-          },
-        },
-        idle: {
-          on: {
-            OPEN_MODAL: {
-              target: 'modal_open',
-              cond: 'isRuleValid',
-              actions: 'setCurrentRule',
-            },
-          },
-        },
-        modal_open: {
-          initial: 'reviewing',
-          states: {
-            reviewing: {
-              on: {
-                REQUEST_RULE_UPGRADE: [
-                  {
-                    target: 'awaiting_confirmation',
-                    cond: 'hasLegacyJobs',
-                  },
-                  {
-                    target: 'upgrading',
-                  },
-                ],
-              },
-            },
-            awaiting_confirmation: {
-              on: {
-                CONFIRM_RULE_UPGRADE: 'upgrading',
-              },
-            },
-            upgrading: {
-              invoke: {
-                src: 'upgradeCurrentRule',
-              },
-            },
-          },
-          on: {
-            CLOSE_MODAL: {
-              target: 'idle',
-              actions: 'resetCurrentRule',
-            },
-          },
-        },
-        dataLoadingError: {
-          on: {
-            DATA_UPDATE: {
-              actions: 'updateData',
-              target: 'idle',
-            },
-          },
-        },
+          ]);
+        } finally {
+          send('CLOSE_MODAL');
+        }
       },
     },
-    {
-      actions: {
-        updateData: assign({
-          rules: (_, event) => (event.type === 'DATA_UPDATE' ? event.rules : undefined),
-          legacyJobsCount: (_, event) =>
-            event.type === 'DATA_UPDATE'
-              ? event.jobs.filter((job) => affectedJobIds.includes(job.id)).length
-              : -1,
-        }),
-        setCurrentRule: assign({
-          currentRule: (context, event: AnyEventObject) =>
-            context.rules?.find((rule) => rule.id === event.ruleId),
-        }),
-        resetCurrentRule: assign({
-          currentRule: () => undefined,
-        }),
-      },
-      guards: {
-        isRuleValid: (context, event) =>
-          event.type === 'OPEN_MODAL'
-            ? context.rules?.some((rule) => rule.id === event.ruleId) ?? false
-            : false,
-        hasLegacyJobs: (context) => context.legacyJobsCount > 0,
-      },
-      services: {
-        upgradeCurrentRule: (context) => async (send) => {
-          if (!context.currentRule) {
-            return;
-          }
-
-          const ruleId = context.currentRule?.rule_id;
-
-          try {
-            await upgradeSpecificRulesRequest([
-              {
-                rule_id: ruleId,
-                version:
-                  context.currentRule.diff.fields.version?.target_version ??
-                  context.currentRule.current_rule.version,
-                revision: context.currentRule.revision,
-              },
-            ]);
-          } finally {
-            send('CLOSE_MODAL');
-          }
-        },
-      },
-    }
-  );
-  const [machineState, sendToMachine] = useMachine(upgradePrebuiltRuleMachine, { devTools: true });
+  });
 
   useEffect(() => {
     if (status === 'success') {
