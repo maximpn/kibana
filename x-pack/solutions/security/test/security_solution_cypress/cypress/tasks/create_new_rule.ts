@@ -937,7 +937,13 @@ export const fillAlertSuppressionFields = (fields: string[]) => {
   cy.get(ALERT_SUPPRESSION_FIELDS_COMBO_BOX).should('not.be.disabled');
   cy.get(ALERT_SUPPRESSION_FIELDS_COMBO_BOX).click();
   fields.forEach((field) => {
-    cy.get(ALERT_SUPPRESSION_FIELDS_COMBO_BOX).type(`${field}{downArrow}{enter}{esc}`);
+    cy.get(ALERT_SUPPRESSION_FIELDS_COMBO_BOX).type(`${field}{downArrow}{enter}`);
+    // Wait for the field to be selected as a pill before closing the dropdown,
+    // otherwise {esc} can race with {enter} and cancel the selection
+    cy.get(ALERT_SUPPRESSION_FIELDS_COMBO_BOX)
+      .find('[data-test-subj="euiComboBoxPill"]')
+      .should('contain.text', field);
+    cy.get(ALERT_SUPPRESSION_FIELDS_COMBO_BOX).type('{esc}');
   });
 };
 
