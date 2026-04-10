@@ -10,7 +10,6 @@ pageLoadAssetSize:
   apm: 25363
   apmSourcesAccess: 2278
   automaticImport: 14484
-  automaticImportVTwo: 17130
   banners: 4087
   canvas: 14881
   cases: 306139
@@ -37,7 +36,6 @@ pageLoadAssetSize:
   data: 496967
   dataQuality: 11469
   datasetQuality: 49315
-  dataSources: 6748
   dataUsage: 8743
   dataViewEditor: 7735
   dataViewFieldEditor: 26024
@@ -91,6 +89,7 @@ pageLoadAssetSize:
   indexManagement: 39694
   inference: 10368
   infra: 56302
+  ingestHub: 6112
   ingestPipelines: 17866
   inputControlVis: 7660
   inspectComponent: 4900
@@ -137,6 +136,7 @@ pageLoadAssetSize:
   productDocBase: 5678
   productIntercept: 9860
   profiling: 20716
+  queryActivity: 4326
   reindexService: 3469
   remoteClusters: 10170
   reporting: 46602
@@ -154,7 +154,6 @@ pageLoadAssetSize:
   searchAssistant: 6150
   searchGettingStarted: 6678
   searchHomepage: 9007
-  searchIndices: 9991
   searchInferenceEndpoints: 9369
   searchNavigation: 8599
   searchNotebooks: 18826
