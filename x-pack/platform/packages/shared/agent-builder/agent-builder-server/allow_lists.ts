@@ -48,6 +48,7 @@ export const AGENT_BUILDER_BUILTIN_TOOLS = [
   `${internalNamespaces.security}.get_entity`,
   `${internalNamespaces.security}.search_entities`,
   `${internalNamespaces.security}.find_prebuilt_rules`,
+  `${internalNamespaces.security}.install_prebuilt_rules`,
 
   // Streams
   `${internalNamespaces.streams}.list_streams`,
