@@ -725,3 +725,6 @@ export enum SecurityAgentBuilderAttachments {
 export const SECURITY_RULE_ATTACHMENT_ID = 'ai-rule-creation';
 
 export const THREAT_HUNTING_AGENT_ID = `${internalNamespaces.security}.agent`;
+
+export const THREAT_COVERAGE_INITIALIZATION_WORKFLOW_ID =
+  'workflow-f9c107e9-e0e5-5038-ae51-baf24c0b851a';
