@@ -76,6 +76,7 @@ import { defaultDeepLinks } from './app/links/default_deep_links';
 import { AIValueReportLocatorDefinition } from '../common/locators/ai_value_report/locator';
 import { registerAttachmentUiDefinitions } from './agent_builder/attachment_types';
 import { registerRuleAttachment } from './agent_builder/attachment_types/rule_attachment';
+import { registerTriggerDefinitions } from './triggers';
 
 export class Plugin implements IPlugin<PluginSetup, PluginStart, SetupPlugins, StartPlugins> {
   private config: SecuritySolutionUiConfigType;
@@ -120,8 +121,12 @@ export class Plugin implements IPlugin<PluginSetup, PluginStart, SetupPlugins, S
   ): PluginSetup {
     this.services.setup(core, plugins);
 
-    const { home, usageCollection, management, cases, share } = plugins;
+    const { home, usageCollection, management, cases, share, workflowsExtensions } = plugins;
     const { productFeatureKeys$ } = this.contract;
+
+    if (workflowsExtensions) {
+      registerTriggerDefinitions(workflowsExtensions);
+    }
 
     if (share) {
       share.url.locators.create(new AIValueReportLocatorDefinition());
