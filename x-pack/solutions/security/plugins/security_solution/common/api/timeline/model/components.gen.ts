@@ -298,7 +298,7 @@ export const SavedTimeline = z.object({
 });
 
 export type SavedTimelineWithSavedObjectId = z.infer<typeof SavedTimelineWithSavedObjectId>;
-export const SavedTimelineWithSavedObjectId = SavedTimeline.merge(
+export const SavedTimelineWithSavedObjectId = SavedTimeline.extend(
   z.object({
     /**
      * The `savedObjectId` of the Timeline or Timeline template
@@ -332,7 +332,7 @@ export const NoteCreatedAndUpdatedMetadata = z.object({
 });
 
 export type BareNote = z.infer<typeof BareNote>;
-export const BareNote = NoteCreatedAndUpdatedMetadata.merge(
+export const BareNote = NoteCreatedAndUpdatedMetadata.extend(
   z.object({
     /**
       * Elasticsearch document `_id` for the event or alert this note refers to. Same value as the `documentIds` query parameter when fetching notes via GET /api/note.
@@ -351,7 +351,7 @@ export const BareNote = NoteCreatedAndUpdatedMetadata.merge(
 );
 
 export type Note = z.infer<typeof Note>;
-export const Note = BareNote.merge(
+export const Note = BareNote.extend(
   z.object({
     /**
      * The `savedObjectId` of the note
@@ -387,7 +387,7 @@ export const PinnedEventCreatedAndUpdatedMetadata = z.object({
 });
 
 export type BarePinnedEvent = z.infer<typeof BarePinnedEvent>;
-export const BarePinnedEvent = PinnedEventCreatedAndUpdatedMetadata.merge(
+export const BarePinnedEvent = PinnedEventCreatedAndUpdatedMetadata.extend(
   z.object({
     /**
      * The `_id` of the associated event for this pinned event.
@@ -401,7 +401,7 @@ export const BarePinnedEvent = PinnedEventCreatedAndUpdatedMetadata.merge(
 );
 
 export type PinnedEvent = z.infer<typeof PinnedEvent>;
-export const PinnedEvent = BarePinnedEvent.merge(
+export const PinnedEvent = BarePinnedEvent.extend(
   z.object({
     /**
      * The `savedObjectId` of this pinned event
@@ -415,7 +415,7 @@ export const PinnedEvent = BarePinnedEvent.merge(
 );
 
 export type TimelineResponse = z.infer<typeof TimelineResponse>;
-export const TimelineResponse = SavedTimeline.merge(SavedTimelineWithSavedObjectId).merge(
+export const TimelineResponse = SavedTimeline.extend(SavedTimelineWithSavedObjectId).extend(
   z.object({
     /**
      * A list of all the notes that are associated to this Timeline.
@@ -441,7 +441,7 @@ export const TimelineResponse = SavedTimeline.merge(SavedTimelineWithSavedObject
 );
 
 export type TimelineSavedToReturnObject = z.infer<typeof TimelineSavedToReturnObject>;
-export const TimelineSavedToReturnObject = SavedTimeline.merge(
+export const TimelineSavedToReturnObject = SavedTimeline.extend(
   z.object({
     savedObjectId: z.string(),
     version: z.string(),
@@ -488,7 +488,7 @@ export type PersistTimelineResponse = z.infer<typeof PersistTimelineResponse>;
 export const PersistTimelineResponse = TimelineResponse;
 
 export type BareNoteWithoutExternalRefs = z.infer<typeof BareNoteWithoutExternalRefs>;
-export const BareNoteWithoutExternalRefs = NoteCreatedAndUpdatedMetadata.merge(
+export const BareNoteWithoutExternalRefs = NoteCreatedAndUpdatedMetadata.extend(
   z.object({
     /**
       * Elasticsearch document `_id` for the event or alert this note refers to. Same value as the `documentIds` query parameter when fetching notes via GET /api/note.
@@ -520,7 +520,7 @@ export type SortDirectionEnum = typeof SortDirection.enum;
 export const SortDirectionEnum = SortDirection.enum;
 
 export type ImportTimelines = z.infer<typeof ImportTimelines>;
-export const ImportTimelines = SavedTimeline.merge(
+export const ImportTimelines = SavedTimeline.extend(
   z.object({
     savedObjectId: z.string().nullable(),
     version: z.string().nullable(),
