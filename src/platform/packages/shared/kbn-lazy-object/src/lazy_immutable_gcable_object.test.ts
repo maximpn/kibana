@@ -97,22 +97,6 @@ describe('lazyImmutableGCableObject', () => {
     expect('missing' in obj).toBe(false);
   });
 
-  it('throws an error upon setting a prop', () => {
-    const obj = lazyImmutableGCableObject(() => ({ value: 1 } as { value: number }));
-
-    expect(() => {
-      obj.value = 42;
-    }).toThrowError();
-  });
-
-  it('throws an error upon deleting a prop', () => {
-    const obj = lazyImmutableGCableObject(() => ({ value: 1 } as Partial<{ value: number }>));
-
-    expect(() => {
-      delete obj.value;
-    }).toThrowError();
-  });
-
   it('enumerates own keys of the materialized object', () => {
     const obj = lazyImmutableGCableObject(() => ({ a: 1, b: 2, c: 3 }));
 
@@ -155,5 +139,33 @@ describe('lazyImmutableGCableObject', () => {
 
     expect(() => Object.getOwnPropertyDescriptor(obj, '_secret')).not.toThrow();
     expect((obj as { _secret: string })._secret).toBe('hidden');
+  });
+
+  it('throws an error upon setting a prop', () => {
+    const obj = lazyImmutableGCableObject(() => ({ value: 1 } as { value: number }));
+
+    expect(() => {
+      obj.value = 42;
+    }).toThrowError();
+  });
+
+  it('throws an error upon defining a prop', () => {
+    const obj = lazyImmutableGCableObject(() => ({ value: 1 } as Partial<{ value: number }>));
+
+    expect(() => {
+      Object.defineProperty(obj, 'foo', {
+        value: 42,
+        writable: false,
+      });
+      delete obj.value;
+    }).toThrowError();
+  });
+
+  it('throws an error upon deleting a prop', () => {
+    const obj = lazyImmutableGCableObject(() => ({ value: 1 } as Partial<{ value: number }>));
+
+    expect(() => {
+      delete obj.value;
+    }).toThrowError();
   });
 });
