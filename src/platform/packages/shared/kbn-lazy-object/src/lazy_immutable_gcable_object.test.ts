@@ -112,4 +112,48 @@ describe('lazyImmutableGCableObject', () => {
       delete obj.value;
     }).toThrowError();
   });
+
+  it('enumerates own keys of the materialized object', () => {
+    const obj = lazyImmutableGCableObject(() => ({ a: 1, b: 2, c: 3 }));
+
+    expect(Object.keys(obj)).toEqual(['a', 'b', 'c']);
+    expect(Object.getOwnPropertyNames(obj)).toEqual(['a', 'b', 'c']);
+
+    const collected: string[] = [];
+
+    // eslint-disable-next-line guard-for-in
+    for (const key in obj) {
+      collected.push(key);
+    }
+
+    expect(collected).toEqual(['a', 'b', 'c']);
+    expect({ ...obj }).toEqual({ a: 1, b: 2, c: 3 });
+  });
+
+  it('exposes property descriptors from the materialized object', () => {
+    const obj = lazyImmutableGCableObject(() => ({ value: 42 }));
+
+    const desc = Object.getOwnPropertyDescriptor(obj, 'value');
+
+    expect(desc).toEqual(expect.objectContaining({ value: 42, enumerable: true, writable: true }));
+    expect(Object.getOwnPropertyDescriptor(obj, 'missing')).toBeUndefined();
+  });
+
+  it('satisfies Proxy invariants for non-configurable properties', () => {
+    // `_zod` on Zod schemas is defined non-configurable; emulate that shape
+    // to verify our descriptor coercion keeps the Proxy invariant happy.
+    const obj = lazyImmutableGCableObject(() => {
+      const inst: { _secret?: string } = {};
+      Object.defineProperty(inst, '_secret', {
+        value: 'hidden',
+        enumerable: false,
+        configurable: false,
+        writable: false,
+      });
+      return inst;
+    });
+
+    expect(() => Object.getOwnPropertyDescriptor(obj, '_secret')).not.toThrow();
+    expect((obj as { _secret: string })._secret).toBe('hidden');
+  });
 });
