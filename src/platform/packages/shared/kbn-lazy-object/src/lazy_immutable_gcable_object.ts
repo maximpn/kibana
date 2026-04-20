@@ -23,13 +23,15 @@
  * Trade-off: if the same object is used repeatedly across GC cycles without
  * callers retaining a reference, each cycle pays the cost of rebuilding it.
  * Hold on to a reference (e.g. `const o = LazyThing; o.method(...)` inside a
- * hot path) if that matters.
+ * hot path) if that matters. Mutations written via the proxy land on the
+ * currently-materialized object; if it is later reclaimed and rebuilt by the
+ * factory, those mutations are not replayed.
  *
  * Caveat: `instanceof` checks on the returned value will be `false` because the
  * Proxy target is an empty object. Structural checks on properties of the
  * materialized object work as expected.
  */
-export function lazyGCableObject<T extends object>(factory: () => T): T {
+export function lazyImmutableGCableObject<T extends object>(factory: () => T): T {
   let ref: WeakRef<T> | undefined;
   const materialize = (): T => {
     const cached = ref?.deref();
@@ -50,8 +52,14 @@ export function lazyGCableObject<T extends object>(factory: () => T): T {
       }
       return value;
     },
+    set(_target, prop, value) {
+      throw new Error('lazyImmutableGCableObject produces an immutable object');
+    },
     has(_target, prop) {
       return prop in (materialize() as unknown as object);
+    },
+    deleteProperty(_target, prop) {
+      throw new Error('lazyImmutableGCableObject produces an immutable object');
     },
   });
 }

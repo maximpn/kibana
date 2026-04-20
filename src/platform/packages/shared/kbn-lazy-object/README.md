@@ -33,12 +33,12 @@ lazily-computed ones.
 
 Use when: only some fields of an object benefit from laziness.
 
-## `lazyGCableObject(factory)`
+## `lazyImmutableGCableObject(factory)`
 
 Whole-object lazy with GC-reclaimable caching. Returns a Proxy that builds the
 underlying object on first property access, caches it behind a `WeakRef`, and
 lets the GC reclaim it once no consumer is holding a reference. The next access
-rebuilds it.
+rebuilds it. Update to the object throw errors.
 
 Use when: you declare many similar objects at module-load time, expect only a
 subset to be used, and want transiently-used ones to be collectible rather than

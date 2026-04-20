@@ -7,10 +7,10 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import { lazyGCableObject } from '@kbn/lazy-object/src/lazy_gcable_object';
+import { lazyImmutableGCableObject } from '@kbn/lazy-object/src/lazy_immutable_gcable_object';
 
 /**
- * Zod-typed wrapper around `lazyGCableObject` for generated schemas
+ * Zod-typed wrapper around `lazyImmutableGCableObject` for generated schemas
  * (e.g. from `@kbn/openapi-generator`). Defers construction of the schema
  * until any property (`.parse`, `.safeParse`, `.extend`, `.optional`, ...)
  * is first accessed, and lets the GC reclaim the materialized schema once no
@@ -21,4 +21,4 @@ import { lazyGCableObject } from '@kbn/lazy-object/src/lazy_gcable_object';
  * object. Zod's own internals and typical consumers use structural `_zod` /
  * `.def` checks rather than `instanceof`, so this is safe in practice.
  */
-export { lazyGCableObject as lazySchema };
+export { lazyImmutableGCableObject as lazySchema };
