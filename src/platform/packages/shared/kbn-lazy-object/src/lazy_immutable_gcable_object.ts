@@ -53,14 +53,8 @@ export function lazyImmutableGCableObject<T extends object>(factory: () => T): T
       }
       return value;
     },
-    set() {
-      throw new Error('lazyImmutableGCableObject produces an immutable object');
-    },
     has(_target, prop) {
       return prop in (materialize() as unknown as object);
-    },
-    deleteProperty() {
-      throw new Error('lazyImmutableGCableObject produces an immutable object');
     },
     ownKeys(_target) {
       return Reflect.ownKeys(materialize() as unknown as object);
@@ -74,6 +68,15 @@ export function lazyImmutableGCableObject<T extends object>(factory: () => T): T
       // here must also exist non-configurably on the target. Our target is an
       // empty `{}`, so coerce to `configurable: true` to stay consistent.
       return { ...desc, configurable: true };
+    },
+    set() {
+      throw new Error('lazyImmutableGCableObject produces an immutable object');
+    },
+    defineProperty() {
+      throw new Error('lazyImmutableGCableObject produces an immutable object');
+    },
+    deleteProperty() {
+      throw new Error('lazyImmutableGCableObject produces an immutable object');
     },
   });
 }
