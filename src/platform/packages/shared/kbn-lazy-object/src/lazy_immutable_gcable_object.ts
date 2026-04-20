@@ -23,13 +23,14 @@
  * Trade-off: if the same object is used repeatedly across GC cycles without
  * callers retaining a reference, each cycle pays the cost of rebuilding it.
  * Hold on to a reference (e.g. `const o = LazyThing; o.method(...)` inside a
- * hot path) if that matters. Mutations written via the proxy land on the
- * currently-materialized object; if it is later reclaimed and rebuilt by the
- * factory, those mutations are not replayed.
+ * hot path) if that matters. Writes (`obj.prop = ...`) and deletions throw —
+ * use `lazyGCableObject` when mutability is required.
  *
  * Caveat: `instanceof` checks on the returned value will be `false` because the
- * Proxy target is an empty object. Structural checks on properties of the
- * materialized object work as expected.
+ * Proxy target is an empty object. Property enumeration (`Object.keys`,
+ * `for...in`, spread) and descriptor lookups (`Object.getOwnPropertyDescriptor`)
+ * reflect the materialized object; descriptors are coerced to `configurable: true`
+ * to satisfy Proxy invariants against the empty target.
  */
 export function lazyImmutableGCableObject<T extends object>(factory: () => T): T {
   let ref: WeakRef<T> | undefined;
@@ -52,14 +53,27 @@ export function lazyImmutableGCableObject<T extends object>(factory: () => T): T
       }
       return value;
     },
-    set(_target, prop, value) {
+    set() {
       throw new Error('lazyImmutableGCableObject produces an immutable object');
     },
     has(_target, prop) {
       return prop in (materialize() as unknown as object);
     },
-    deleteProperty(_target, prop) {
+    deleteProperty() {
       throw new Error('lazyImmutableGCableObject produces an immutable object');
+    },
+    ownKeys(_target) {
+      return Reflect.ownKeys(materialize() as unknown as object);
+    },
+    getOwnPropertyDescriptor(_target, prop) {
+      const desc = Reflect.getOwnPropertyDescriptor(materialize() as unknown as object, prop);
+      if (!desc) {
+        return undefined;
+      }
+      // Proxy invariants require that any non-configurable property reported
+      // here must also exist non-configurably on the target. Our target is an
+      // empty `{}`, so coerce to `configurable: true` to stay consistent.
+      return { ...desc, configurable: true };
     },
   });
 }
