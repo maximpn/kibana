@@ -7,12 +7,12 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import { lazyGCableObject } from './lazy_gcable_object';
+import { lazyImmutableGCableObject } from './lazy_immutable_gcable_object';
 
-describe('lazyGCableObject', () => {
+describe('lazyImmutableGCableObject', () => {
   it('defers factory invocation until first property access', () => {
     const factory = jest.fn(() => ({ value: 1 }));
-    const obj = lazyGCableObject(factory);
+    const obj = lazyImmutableGCableObject(factory);
 
     expect(factory).not.toHaveBeenCalled();
 
@@ -24,7 +24,7 @@ describe('lazyGCableObject', () => {
 
   it('caches the materialized object while it is still reachable', () => {
     const factory = jest.fn(() => ({ value: 1 }));
-    const obj = lazyGCableObject(factory);
+    const obj = lazyImmutableGCableObject(factory);
 
     // A single retained reference pins the instance, so all reads reuse it.
     expect(obj.value).toBe(1);
@@ -60,7 +60,7 @@ describe('lazyGCableObject', () => {
     (globalThis as { WeakRef: unknown }).WeakRef = EvictableWeakRef;
 
     try {
-      const obj = lazyGCableObject(factory);
+      const obj = lazyImmutableGCableObject(factory);
 
       void obj.value;
       expect(factory).toHaveBeenCalledTimes(1);
@@ -76,7 +76,7 @@ describe('lazyGCableObject', () => {
   });
 
   it('binds function-valued properties to the materialized object', () => {
-    const obj = lazyGCableObject(() => ({
+    const obj = lazyImmutableGCableObject(() => ({
       value: 42,
       getValue() {
         return this.value;
@@ -91,9 +91,25 @@ describe('lazyGCableObject', () => {
   });
 
   it('supports the `in` operator via the has trap', () => {
-    const obj = lazyGCableObject(() => ({ a: 1, b: 2 }));
+    const obj = lazyImmutableGCableObject(() => ({ a: 1, b: 2 }));
 
     expect('a' in obj).toBe(true);
     expect('missing' in obj).toBe(false);
+  });
+
+  it('throws an error upon setting a prop', () => {
+    const obj = lazyImmutableGCableObject(() => ({ value: 1 } as { value: number }));
+
+    expect(() => {
+      obj.value = 42;
+    }).toThrowError();
+  });
+
+  it('throws an error upon deleting a prop', () => {
+    const obj = lazyImmutableGCableObject(() => ({ value: 1 } as Partial<{ value: number }>));
+
+    expect(() => {
+      delete obj.value;
+    }).toThrowError();
   });
 });
