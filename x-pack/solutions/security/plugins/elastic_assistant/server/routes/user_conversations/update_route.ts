@@ -13,12 +13,10 @@ import {
   ELASTIC_AI_ASSISTANT_CONVERSATIONS_URL_BY_ID,
   getConversationSharedState,
   getIsConversationOwner,
-} from '@kbn/elastic-assistant-common';
-import type { ConversationResponse } from '@kbn/elastic-assistant-common/impl/schemas';
-import {
   ConversationUpdateProps,
   UpdateConversationRequestParams,
-} from '@kbn/elastic-assistant-common/impl/schemas';
+} from '@kbn/elastic-assistant-common';
+import type { ConversationResponse } from '@kbn/elastic-assistant-common';
 import { buildRouteValidationWithZod } from '@kbn/elastic-assistant-common/impl/schemas/common';
 import { AUDIT_OUTCOME } from '../../ai_assistant_data_clients/knowledge_base/audit_events';
 import {

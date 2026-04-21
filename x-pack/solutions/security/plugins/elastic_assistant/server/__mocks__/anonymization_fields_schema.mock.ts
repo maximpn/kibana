@@ -11,7 +11,7 @@ import type {
   AnonymizationFieldResponse,
   AnonymizationFieldUpdateProps,
   PerformAnonymizationFieldsBulkActionRequestBody,
-} from '@kbn/elastic-assistant-common/impl/schemas';
+} from '@kbn/elastic-assistant-common';
 import type { EsAnonymizationFieldsSchema } from '../ai_assistant_data_clients/anonymization_fields/types';
 
 export const getAnonymizationFieldsSearchEsMock = () => {

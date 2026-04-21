@@ -29,6 +29,7 @@ import type { StructuredToolInterface } from '@langchain/core/tools';
 import type { SpacesPluginSetup, SpacesPluginStart } from '@kbn/spaces-plugin/server';
 import type { TaskManagerSetupContract } from '@kbn/task-manager-plugin/server';
 import type {
+  AnonymizationFieldResponse,
   PostAttackDiscoveryGenerateRequestBody,
   DefendInsightsPostRequestBody,
   AssistantFeatures,
@@ -36,7 +37,6 @@ import type {
   Replacements,
   ContentReferencesStore,
 } from '@kbn/elastic-assistant-common';
-import type { AnonymizationFieldResponse } from '@kbn/elastic-assistant-common/impl/schemas';
 import type {
   LicensingApiRequestHandlerContext,
   LicensingPluginStart,

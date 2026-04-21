@@ -7,8 +7,11 @@
 
 import type { DateMath } from '@elastic/elasticsearch/lib/api/types';
 import type { ElasticsearchClient } from '@kbn/core/server';
-import type { AnonymizationFieldResponse } from '@kbn/elastic-assistant-common/impl/schemas';
-import type { DefendInsightType, Replacements } from '@kbn/elastic-assistant-common';
+import type {
+  AnonymizationFieldResponse,
+  DefendInsightType,
+  Replacements,
+} from '@kbn/elastic-assistant-common';
 import {
   getAnonymizedValue,
   getRawDataOrDefault,

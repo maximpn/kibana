@@ -10,8 +10,11 @@ import type { Document } from '@langchain/core/documents';
 import type { DateMath } from '@elastic/elasticsearch/lib/api/types';
 import type { ElasticsearchClient } from '@kbn/core/server';
 import { BaseRetriever, type BaseRetrieverInput } from '@langchain/core/retrievers';
-import type { DefendInsightType, Replacements } from '@kbn/elastic-assistant-common';
-import type { AnonymizationFieldResponse } from '@kbn/elastic-assistant-common/impl/schemas';
+import type {
+  DefendInsightType,
+  Replacements,
+  AnonymizationFieldResponse,
+} from '@kbn/elastic-assistant-common';
 
 import type { AIAssistantKnowledgeBaseDataClient } from '../../../../../../../ai_assistant_data_clients/knowledge_base';
 import { getAnonymizedEvents } from './get_events';

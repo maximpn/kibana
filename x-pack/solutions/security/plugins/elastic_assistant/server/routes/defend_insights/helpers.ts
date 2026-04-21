@@ -22,8 +22,8 @@ import type {
   DefendInsightsPostRequestBody,
   DefendInsightsResponse,
   Replacements,
+  AnonymizationFieldResponse,
 } from '@kbn/elastic-assistant-common';
-import type { AnonymizationFieldResponse } from '@kbn/elastic-assistant-common/impl/schemas';
 import type { ActionsClient } from '@kbn/actions-plugin/server';
 import type { Moment } from 'moment';
 import type { PublicMethodsOf } from '@kbn/utility-types';

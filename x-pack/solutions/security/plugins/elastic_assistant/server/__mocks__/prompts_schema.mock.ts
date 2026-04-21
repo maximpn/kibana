@@ -12,7 +12,7 @@ import type {
   PromptCreateProps,
   PromptResponse,
   PromptUpdateProps,
-} from '@kbn/elastic-assistant-common/impl/schemas';
+} from '@kbn/elastic-assistant-common';
 
 export const getPromptsSearchEsMock = () => {
   const searchResponse: estypes.SearchResponse<EsPromptsSchema> = {

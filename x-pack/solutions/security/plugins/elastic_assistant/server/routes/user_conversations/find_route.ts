@@ -11,9 +11,9 @@ import { transformError } from '@kbn/securitysolution-es-utils';
 import {
   API_VERSIONS,
   ELASTIC_AI_ASSISTANT_CONVERSATIONS_URL_FIND,
+  FindConversationsRequestQuery,
 } from '@kbn/elastic-assistant-common';
-import type { FindConversationsResponse } from '@kbn/elastic-assistant-common/impl/schemas';
-import { FindConversationsRequestQuery } from '@kbn/elastic-assistant-common/impl/schemas';
+import type { FindConversationsResponse } from '@kbn/elastic-assistant-common';
 import { buildRouteValidationWithZod } from '@kbn/elastic-assistant-common/impl/schemas/common';
 import { getUserFilter } from './utils';
 import type { ElasticAssistantPluginRouter } from '../../types';

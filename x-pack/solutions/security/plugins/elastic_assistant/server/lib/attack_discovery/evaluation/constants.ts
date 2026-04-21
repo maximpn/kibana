@@ -5,7 +5,7 @@
  * 2.0.
  */
 
-import type { AnonymizationFieldResponse } from '@kbn/elastic-assistant-common/impl/schemas';
+import type { AnonymizationFieldResponse } from '@kbn/elastic-assistant-common';
 
 export const DEFAULT_EVAL_ANONYMIZATION_FIELDS: AnonymizationFieldResponse[] = [
   {

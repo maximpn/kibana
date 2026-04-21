@@ -11,10 +11,10 @@ import {
   API_VERSIONS,
   ELASTIC_AI_ASSISTANT_KNOWLEDGE_BASE_ENTRIES_URL_BY_ID,
   UpdateKnowledgeBaseEntryRequestParams,
+  KnowledgeBaseEntryUpdateRouteProps,
 } from '@kbn/elastic-assistant-common';
 import { buildRouteValidationWithZod } from '@kbn/elastic-assistant-common/impl/schemas/common';
-import type { KnowledgeBaseEntryResponse } from '@kbn/elastic-assistant-common/impl/schemas';
-import { KnowledgeBaseEntryUpdateRouteProps } from '@kbn/elastic-assistant-common/impl/schemas';
+import type { KnowledgeBaseEntryResponse } from '@kbn/elastic-assistant-common';
 import type { ElasticAssistantPluginRouter } from '../../../types';
 import { buildResponse } from '../../utils';
 import { performChecks } from '../../helpers';

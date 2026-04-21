@@ -12,6 +12,7 @@ import { transformError } from '@kbn/securitysolution-es-utils';
 import {
   API_VERSIONS,
   ELASTIC_AI_ASSISTANT_ANONYMIZATION_FIELDS_URL_BULK_ACTION,
+  PerformAnonymizationFieldsBulkActionRequestBody,
 } from '@kbn/elastic-assistant-common';
 
 import type {
@@ -21,8 +22,7 @@ import type {
   AnonymizationFieldsBulkCrudActionResults,
   BulkCrudActionSummary,
   PerformAnonymizationFieldsBulkActionResponse,
-} from '@kbn/elastic-assistant-common/impl/schemas';
-import { PerformAnonymizationFieldsBulkActionRequestBody } from '@kbn/elastic-assistant-common/impl/schemas';
+} from '@kbn/elastic-assistant-common';
 import { buildRouteValidationWithZod } from '@kbn/elastic-assistant-common/impl/schemas/common';
 import type { ElasticAssistantPluginRouter } from '../../types';
 import { buildResponse } from '../utils';
