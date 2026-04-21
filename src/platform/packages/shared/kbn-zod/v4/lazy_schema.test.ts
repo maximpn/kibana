@@ -11,7 +11,7 @@ import { z } from '.';
 import { lazySchema } from './lazy_schema';
 
 /**
- * Test Zod specific patters
+ * Test Zod specific patterns
  */
 describe('lazySchema', () => {
   it('forwards parse/safeParse and applies validation', () => {

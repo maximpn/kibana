@@ -157,7 +157,6 @@ describe('lazyImmutableGCableObject', () => {
         value: 42,
         writable: false,
       });
-      delete obj.value;
     }).toThrowError();
   });
 
