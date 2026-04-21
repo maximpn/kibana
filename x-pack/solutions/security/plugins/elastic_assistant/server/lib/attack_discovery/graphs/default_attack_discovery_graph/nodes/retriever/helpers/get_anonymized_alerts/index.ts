@@ -7,7 +7,7 @@
 
 import type { DateMath, SearchResponse } from '@elastic/elasticsearch/lib/api/types';
 import type { ElasticsearchClient } from '@kbn/core/server';
-import type { Replacements, AnonymizationFieldResponse } from '@kbn/elastic-assistant-common';
+import type { Replacements } from '@kbn/elastic-assistant-common';
 import {
   getAnonymizedValue,
   getOpenAndAcknowledgedAlertsQuery,
@@ -15,6 +15,8 @@ import {
   sizeIsOutOfRange,
   transformRawData,
 } from '@kbn/elastic-assistant-common';
+
+import type { AnonymizationFieldResponse } from '@kbn/elastic-assistant-common/impl/schemas';
 
 export const getAnonymizedAlerts = async ({
   alertsIndexPattern,

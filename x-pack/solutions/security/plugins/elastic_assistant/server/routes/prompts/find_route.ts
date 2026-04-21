@@ -8,12 +8,9 @@
 import type { IKibanaResponse, Logger } from '@kbn/core/server';
 import { transformError } from '@kbn/securitysolution-es-utils';
 
-import {
-  API_VERSIONS,
-  ELASTIC_AI_ASSISTANT_PROMPTS_URL_FIND,
-  FindPromptsRequestQuery,
-} from '@kbn/elastic-assistant-common';
-import type { FindPromptsResponse } from '@kbn/elastic-assistant-common';
+import { API_VERSIONS, ELASTIC_AI_ASSISTANT_PROMPTS_URL_FIND } from '@kbn/elastic-assistant-common';
+import type { FindPromptsResponse } from '@kbn/elastic-assistant-common/impl/schemas';
+import { FindPromptsRequestQuery } from '@kbn/elastic-assistant-common/impl/schemas';
 import { buildRouteValidationWithZod } from '@kbn/elastic-assistant-common/impl/schemas/common';
 import type { ElasticAssistantPluginRouter } from '../../types';
 import { buildResponse } from '../utils';

@@ -12,7 +12,7 @@ import type { ElasticsearchClient } from '@kbn/core-elasticsearch-server';
 import type { InferenceConnector } from '@kbn/inference-common';
 import { getConnectorDefaultModel } from '@kbn/inference-common';
 import type { Logger } from '@kbn/logging';
-import type { AnonymizationFieldResponse } from '@kbn/elastic-assistant-common';
+import type { AnonymizationFieldResponse } from '@kbn/elastic-assistant-common/impl/schemas';
 import type { SavedObjectsClientContract } from '@kbn/core/server';
 import { asyncForEach } from '@kbn/std';
 import { getLangSmithTracer } from '@kbn/langchain/server/tracers/langsmith';

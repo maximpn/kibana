@@ -11,7 +11,7 @@ import type {
   PromptResponse,
   PromptType,
   PromptUpdateProps,
-} from '@kbn/elastic-assistant-common';
+} from '@kbn/elastic-assistant-common/impl/schemas';
 import type { AuthenticatedUser } from '@kbn/core-security-common';
 import type { CreatePromptSchema, EsPromptsSchema, UpdatePromptSchema } from './types';
 

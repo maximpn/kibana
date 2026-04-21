@@ -6,7 +6,8 @@
  */
 
 import type { ElasticsearchClient, Logger } from '@kbn/core/server';
-import type { Replacements, AnonymizationFieldResponse } from '@kbn/elastic-assistant-common';
+import type { Replacements } from '@kbn/elastic-assistant-common';
+import type { AnonymizationFieldResponse } from '@kbn/elastic-assistant-common/impl/schemas';
 
 import type { AttackDiscoveryGraphState } from '../../../../../langchain/graphs';
 import { AnonymizedAlertsRetriever } from './anonymized_alerts_retriever';

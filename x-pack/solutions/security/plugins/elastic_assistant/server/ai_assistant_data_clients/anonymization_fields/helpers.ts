@@ -10,7 +10,7 @@ import type {
   AnonymizationFieldCreateProps,
   AnonymizationFieldResponse,
   AnonymizationFieldUpdateProps,
-} from '@kbn/elastic-assistant-common';
+} from '@kbn/elastic-assistant-common/impl/schemas';
 import type { AuthenticatedUser } from '@kbn/core-security-common';
 import type {
   CreateAnonymizationFieldSchema,

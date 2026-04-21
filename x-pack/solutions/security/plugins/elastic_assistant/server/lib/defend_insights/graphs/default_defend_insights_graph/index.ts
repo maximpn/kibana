@@ -8,11 +8,8 @@
 import type { CompiledStateGraph } from '@langchain/langgraph';
 import type { ElasticsearchClient, Logger } from '@kbn/core/server';
 import type { ActionsClientLlm } from '@kbn/langchain/server';
-import type {
-  DefendInsightType,
-  Replacements,
-  AnonymizationFieldResponse,
-} from '@kbn/elastic-assistant-common';
+import type { DefendInsightType, Replacements } from '@kbn/elastic-assistant-common';
+import type { AnonymizationFieldResponse } from '@kbn/elastic-assistant-common/impl/schemas';
 import { END, START, StateGraph } from '@langchain/langgraph';
 
 import type { AIAssistantKnowledgeBaseDataClient } from '../../../../ai_assistant_data_clients/knowledge_base';

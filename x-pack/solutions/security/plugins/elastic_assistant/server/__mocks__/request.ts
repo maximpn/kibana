@@ -19,12 +19,6 @@ import type {
   ConversationUpdateProps,
   PerformKnowledgeBaseEntryBulkActionRequestBody,
   PostEvaluateRequestBodyInput,
-  AnonymizationFieldCreateProps,
-  AnonymizationFieldUpdateProps,
-  AlertSummaryCreateProps,
-  AlertSummaryUpdateProps,
-  PromptCreateProps,
-  PromptUpdateProps,
 } from '@kbn/elastic-assistant-common';
 import {
   ELASTIC_USERS_SUGGEST_URL,
@@ -63,6 +57,14 @@ import {
   getUpdateConversationSchemaMock,
 } from './conversations_schema.mock';
 import { getCreateKnowledgeBaseEntrySchemaMock } from './knowledge_base_entry_schema.mock';
+import type {
+  AnonymizationFieldCreateProps,
+  AnonymizationFieldUpdateProps,
+  AlertSummaryCreateProps,
+  AlertSummaryUpdateProps,
+  PromptCreateProps,
+  PromptUpdateProps,
+} from '@kbn/elastic-assistant-common/impl/schemas';
 
 export const requestMock = {
   create: httpServerMock.createKibanaRequest,

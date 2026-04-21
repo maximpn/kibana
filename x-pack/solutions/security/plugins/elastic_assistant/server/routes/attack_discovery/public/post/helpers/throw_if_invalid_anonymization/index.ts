@@ -5,7 +5,7 @@
  * 2.0.
  */
 
-import type { AnonymizationFieldResponse } from '@kbn/elastic-assistant-common';
+import type { AnonymizationFieldResponse } from '@kbn/elastic-assistant-common/impl/schemas';
 
 import * as i18n from './translations';
 

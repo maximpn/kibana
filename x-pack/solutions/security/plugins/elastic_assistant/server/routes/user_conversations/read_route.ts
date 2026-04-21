@@ -12,9 +12,9 @@ import {
   ELASTIC_AI_ASSISTANT_CONVERSATIONS_URL_BY_ID,
   getConversationSharedState,
   getIsConversationOwner,
-  ReadConversationRequestParams,
 } from '@kbn/elastic-assistant-common';
-import type { ConversationResponse } from '@kbn/elastic-assistant-common';
+import type { ConversationResponse } from '@kbn/elastic-assistant-common/impl/schemas';
+import { ReadConversationRequestParams } from '@kbn/elastic-assistant-common/impl/schemas';
 import { buildRouteValidationWithZod } from '@kbn/elastic-assistant-common/impl/schemas/common';
 import { SHARED_CONVERSATION_ACCESSED_EVENT } from '../../lib/telemetry/event_based_telemetry';
 import { buildResponse } from '../utils';

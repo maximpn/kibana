@@ -12,7 +12,7 @@ import type {
   AlertSummaryCreateProps,
   AlertSummaryResponse,
   AlertSummaryUpdateProps,
-} from '@kbn/elastic-assistant-common';
+} from '@kbn/elastic-assistant-common/impl/schemas';
 export const mockEsAlertSummarySchema = {
   '@timestamp': '2019-12-13T16:40:33.400Z',
   created_at: '2019-12-13T16:40:33.400Z',
