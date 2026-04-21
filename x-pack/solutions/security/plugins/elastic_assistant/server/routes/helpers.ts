@@ -57,7 +57,15 @@ import { getLangChainMessages } from '../lib/langchain/helpers';
 
 import type { AIAssistantConversationsDataClient } from '../ai_assistant_data_clients/conversations';
 import type { ElasticAssistantRequestHandlerContext } from '../types';
-import { callAssistantGraph } from '../lib/langchain/graphs/default_assistant_graph';
+
+type DefaultAssistantGraphModule = typeof import('../lib/langchain/graphs/default_assistant_graph');
+
+let defaultAssistantGraphModulePromise: Promise<DefaultAssistantGraphModule> | undefined;
+
+const loadDefaultAssistantGraphModule = (): Promise<DefaultAssistantGraphModule> => {
+  defaultAssistantGraphModulePromise ??= import('../lib/langchain/graphs/default_assistant_graph');
+  return defaultAssistantGraphModulePromise;
+};
 
 interface GetPluginNameFromRequestParams {
   request: KibanaRequest;
@@ -401,6 +409,7 @@ export const langChainExecute = async ({
     },
   };
 
+  const { callAssistantGraph } = await loadDefaultAssistantGraphModule();
   const result: StreamResponseWithHeaders | StaticReturnType = await callAssistantGraph(
     executorParams
   );
