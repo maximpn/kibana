@@ -7,7 +7,7 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import { lazyImmutableGCableObject } from '@kbn/lazy-object/src/lazy_immutable_gcable_object';
+import { lazyImmutableGCableObject } from './lazy_immutable_gcable_object';
 
 /**
  * Zod-typed wrapper around `lazyImmutableGCableObject` for generated schemas
@@ -16,7 +16,9 @@ import { lazyImmutableGCableObject } from '@kbn/lazy-object/src/lazy_immutable_g
  * is first accessed, and lets the GC reclaim the materialized schema once no
  * consumer is holding a reference.
  *
- * Zod-specific caveat: `instanceof z.ZodObject` / `instanceof z.ZodType` on
+ * Caveat: chaining e.g. Schema.optional().nullable() will again retain the memory.
+ *
+ * Caveat: `instanceof z.ZodObject` / `instanceof z.ZodType` on
  * the returned value will be `false` because the Proxy target is an empty
  * object. Zod's own internals and typical consumers use structural `_zod` /
  * `.def` checks rather than `instanceof`, so this is safe in practice.

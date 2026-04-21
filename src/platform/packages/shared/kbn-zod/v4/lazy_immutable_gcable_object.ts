@@ -23,8 +23,7 @@
  * Trade-off: if the same object is used repeatedly across GC cycles without
  * callers retaining a reference, each cycle pays the cost of rebuilding it.
  * Hold on to a reference (e.g. `const o = LazyThing; o.method(...)` inside a
- * hot path) if that matters. Writes (`obj.prop = ...`) and deletions throw —
- * use `lazyGCableObject` when mutability is required.
+ * hot path) if that matters. Writes (`obj.prop = ...`) and deletions throw.
  *
  * Caveat: `instanceof` checks on the returned value will be `false` because the
  * Proxy target is an empty object. Property enumeration (`Object.keys`,

@@ -10,7 +10,6 @@
 export { createLazyObjectFromFactories } from './src/create_lazy_object_from_factories';
 export { getLazyObjectMetrics } from './src/metrics';
 export { lazyObject } from './src/lazy_object';
-export { lazyImmutableGCableObject } from './src/lazy_immutable_gcable_object';
 export {
   createLazyObjectFromAnnotations,
   annotateLazy,
