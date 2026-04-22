@@ -9,4 +9,4 @@
 
 export * from 'zod/v4';
 export { isZod } from './util';
-export { lazySchema } from './lazy_schema';
+export { lazySchema, setLazySchemaDisabled } from './lazy_schema';
