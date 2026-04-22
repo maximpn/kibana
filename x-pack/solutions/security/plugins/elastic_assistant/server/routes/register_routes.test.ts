@@ -58,6 +58,9 @@ import { enableAttackDiscoverySchedulesRoute } from './attack_discovery/schedule
 import { getMissingIndexPrivilegesInternalRoute } from './attack_discovery/privileges/get_missing_privileges';
 import { suggestUsersRoute } from './users/suggest';
 import { createAttackDiscoveryAlertsRoute } from './test_internal/create_attack_discovery_alerts_route';
+import { deleteAllConversationsRoute } from './user_conversations/delete_all_route';
+import { findSecurityAIPromptsRoute } from './security_ai_prompts/find_prompts';
+import { updateAnonymizationFieldsRoute } from './test_internal/update_anonymization_fields_route';
 
 jest.mock('./alert_summary/find_route');
 const findAlertSummaryRouteMock = findAlertSummaryRoute as jest.Mock;
@@ -111,6 +114,12 @@ jest.mock('./users/suggest');
 const suggestUsersRouteMock = suggestUsersRoute as jest.Mock;
 jest.mock('./test_internal/create_attack_discovery_alerts_route');
 const createAttackDiscoveryAlertsRouteMock = createAttackDiscoveryAlertsRoute as jest.Mock;
+jest.mock('./user_conversations/delete_all_route');
+const deleteAllConversationsRouteMock = deleteAllConversationsRoute as jest.Mock;
+jest.mock('./security_ai_prompts/find_prompts');
+const findSecurityAIPromptsRouteMock = findSecurityAIPromptsRoute as jest.Mock;
+jest.mock('./test_internal/update_anonymization_fields_route');
+const updateAnonymizationFieldsRouteMock = updateAnonymizationFieldsRoute as jest.Mock;
 
 jest.mock('./user_conversations/create_route');
 const createConversationRouteMock = createConversationRoute as jest.Mock;
@@ -282,7 +291,7 @@ describe('registerRoutes', () => {
   });
 
   it('should call `postEvaluateRouteMock`', () => {
-    expect(postEvaluateRouteMock).toHaveBeenCalledWith(server.router);
+    expect(postEvaluateRouteMock).toHaveBeenCalledWith(server.router, config);
   });
 
   it('should call `getCapabilitiesRouteMock`', () => {
@@ -355,6 +364,18 @@ describe('registerRoutes', () => {
 
   it('should call `suggestUsersRouteMock`', () => {
     expect(suggestUsersRouteMock).toHaveBeenCalledWith(server.router, loggerMock);
+  });
+
+  it('should call `deleteAllConversationsRouteMock`', () => {
+    expect(deleteAllConversationsRouteMock).toHaveBeenCalledWith(server.router);
+  });
+
+  it('should call `findSecurityAIPromptsRouteMock`', () => {
+    expect(findSecurityAIPromptsRouteMock).toHaveBeenCalledWith(server.router, loggerMock);
+  });
+
+  it('should call `updateAnonymizationFieldsRouteMock`', () => {
+    expect(updateAnonymizationFieldsRouteMock).toHaveBeenCalledWith(server.router);
   });
 
   it('should not register data generator routes when disabled', () => {

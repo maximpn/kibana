@@ -17,7 +17,6 @@ import { getLangSmithTracer } from '@kbn/langchain/server/tracers/langsmith';
 import type { Document } from '@langchain/core/documents';
 
 import type { AttackDiscoveryGraphState } from '../../../../../../lib/langchain/graphs';
-import { getDefaultAttackDiscoveryGraph } from '../../../../../../lib/attack_discovery/graphs/default_attack_discovery_graph';
 import {
   ATTACK_DISCOVERY_GRAPH_RUN_NAME,
   ATTACK_DISCOVERY_TAG,
@@ -25,7 +24,25 @@ import {
 import { throwIfErrorCountsExceeded } from '../throw_if_error_counts_exceeded';
 import { throwIfInvalidAnonymization } from '../throw_if_invalid_anonymization';
 import { getLlmType } from '../../../../../utils';
-import { getAttackDiscoveryPrompts } from '../../../../../../lib/attack_discovery/graphs/default_attack_discovery_graph/prompts';
+
+type AttackDiscoveryGraphModule =
+  typeof import('../../../../../../lib/attack_discovery/graphs/default_attack_discovery_graph');
+type AttackDiscoveryPromptsModule =
+  typeof import('../../../../../../lib/attack_discovery/graphs/default_attack_discovery_graph/prompts');
+
+let attackDiscoveryInvokeDeps:
+  | Promise<[AttackDiscoveryGraphModule, AttackDiscoveryPromptsModule]>
+  | undefined;
+
+const loadAttackDiscoveryInvokeDeps = (): Promise<
+  [AttackDiscoveryGraphModule, AttackDiscoveryPromptsModule]
+> => {
+  attackDiscoveryInvokeDeps ??= Promise.all([
+    import('../../../../../../lib/attack_discovery/graphs/default_attack_discovery_graph'),
+    import('../../../../../../lib/attack_discovery/graphs/default_attack_discovery_graph/prompts'),
+  ]);
+  return attackDiscoveryInvokeDeps;
+};
 
 export const invokeAttackDiscoveryGraph = async ({
   actionsClient,
@@ -68,6 +85,9 @@ export const invokeAttackDiscoveryGraph = async ({
   attackDiscoveries: AttackDiscovery[] | null;
 }> => {
   throwIfInvalidAnonymization(anonymizationFields);
+
+  const [{ getDefaultAttackDiscoveryGraph }, { getAttackDiscoveryPrompts }] =
+    await loadAttackDiscoveryInvokeDeps();
 
   const llmType = getLlmType(apiConfig.actionTypeId);
   const isInferenceEndpoint =

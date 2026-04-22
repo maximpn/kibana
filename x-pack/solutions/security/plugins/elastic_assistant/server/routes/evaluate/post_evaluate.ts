@@ -37,7 +37,6 @@ import { evaluateDefendInsights } from '../../lib/defend_insights/evaluation';
 import { localToolPrompts, promptGroupId as toolsGroupId } from '../../lib/prompt/tool_prompts';
 import { promptGroupId } from '../../lib/prompt/local_prompt_object';
 import { getFormattedTime, getModelOrOss } from '../../lib/prompt/helpers';
-import { getAttackDiscoveryPrompts } from '../../lib/attack_discovery/graphs/default_attack_discovery_graph/prompts';
 import {
   DEFAULT_ASSISTANT_GRAPH_PROMPT_TEMPLATE,
   chatPromptFactory,
@@ -61,7 +60,6 @@ import { transformESSearchToAnonymizationFields } from '../../ai_assistant_data_
 import type { EsAnonymizationFieldsSchema } from '../../ai_assistant_data_clients/anonymization_fields/types';
 import { evaluateAttackDiscovery } from '../../lib/attack_discovery/evaluation';
 import type { DefaultAssistantGraph } from '../../lib/langchain/graphs/default_assistant_graph/graph';
-import { getDefaultAssistantGraph } from '../../lib/langchain/graphs/default_assistant_graph/graph';
 import { getLlmClass, getLlmType, isOpenSourceModel } from '../utils';
 import { getGraphsFromNames } from './get_graphs_from_names';
 import { DEFAULT_DATE_FORMAT_TZ } from '../../../common/constants';
@@ -70,6 +68,18 @@ import type { ConfigSchema } from '../../config_schema';
 
 const DEFAULT_SIZE = 20;
 const ROUTE_HANDLER_TIMEOUT = 10 * 60 * 1000; // 10 * 60 seconds = 10 minutes
+
+type AssistantGraphGraphModule =
+  typeof import('../../lib/langchain/graphs/default_assistant_graph/graph');
+
+let assistantGraphForEvaluateModulePromise: Promise<AssistantGraphGraphModule> | undefined;
+
+const loadAssistantGraphForEvaluateModule = (): Promise<AssistantGraphGraphModule> => {
+  assistantGraphForEvaluateModulePromise ??= import(
+    '../../lib/langchain/graphs/default_assistant_graph/graph'
+  );
+  return assistantGraphForEvaluateModulePromise;
+};
 
 export const postEvaluateRoute = (
   router: IRouter<ElasticAssistantRequestHandlerContext>,
@@ -258,6 +268,9 @@ export const postEvaluateRoute = (
           }
 
           if (attackDiscoveryGraphs.length > 0) {
+            const { getAttackDiscoveryPrompts } = await import(
+              '../../lib/attack_discovery/graphs/default_attack_discovery_graph/prompts'
+            );
             const connectorsWithPrompts = await Promise.all(
               connectors.map(async (connector) => {
                 const prompts = await getAttackDiscoveryPrompts({
@@ -302,6 +315,8 @@ export const postEvaluateRoute = (
               body: { evaluationId, success: true },
             });
           }
+
+          const { getDefaultAssistantGraph } = await loadAssistantGraphForEvaluateModule();
 
           const graphs: Array<{
             name: string;
