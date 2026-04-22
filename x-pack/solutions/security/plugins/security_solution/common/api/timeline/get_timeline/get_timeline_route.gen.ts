@@ -21,7 +21,7 @@ import { TimelineResponse } from '../model/components.gen';
 export const GetTimelineRequestQuery = lazySchema(() =>
   z.object({
     /**
-     * The `savedObjectId` of the template timeline to retrieve
+     * The `savedObjectId` of the Timeline template to retrieve.
      */
     template_timeline_id: z.string().optional(),
     /**

@@ -30,3 +30,6 @@ export const DeleteTimelinesRequestBody = lazySchema(() =>
 );
 export type DeleteTimelinesRequestBody = z.infer<typeof DeleteTimelinesRequestBody>;
 export type DeleteTimelinesRequestBodyInput = z.input<typeof DeleteTimelinesRequestBody>;
+
+export const DeleteTimelinesResponse = lazySchema(() => z.object({}).catchall(z.unknown()));
+export type DeleteTimelinesResponse = z.infer<typeof DeleteTimelinesResponse>;

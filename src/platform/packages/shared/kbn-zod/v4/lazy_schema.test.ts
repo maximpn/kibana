@@ -8,7 +8,7 @@
  */
 
 import { z } from '.';
-import { lazySchema } from './lazy_schema';
+import { lazySchema, setLazySchemaDisabled } from './lazy_schema';
 
 /**
  * Test Zod specific patterns
@@ -122,6 +122,44 @@ describe('lazySchema', () => {
       expect(ColorEnum.red).toBe('red');
       expect(Color.parse('green')).toBe('green');
       expect(Color.safeParse('purple').success).toBe(false);
+    });
+  });
+
+  describe('setLazySchemaDisabled', () => {
+    // Always restore the default after each test — the toggle is a module-level
+    // singleton and would otherwise leak across test files.
+    afterEach(() => setLazySchemaDisabled(false));
+
+    it('defers factory invocation by default (enabled)', () => {
+      const factory = jest.fn(() => z.object({ id: z.string() }));
+      const Schema = lazySchema(factory);
+
+      expect(factory).not.toHaveBeenCalled();
+
+      Schema.parse({ id: 'a' });
+      expect(factory).toHaveBeenCalledTimes(1);
+    });
+
+    it('calls the factory eagerly when disabled', () => {
+      setLazySchemaDisabled(true);
+
+      const factory = jest.fn(() => z.object({ id: z.string() }));
+      lazySchema(factory);
+
+      // No Proxy in this mode — the schema is constructed at wrap time.
+      expect(factory).toHaveBeenCalledTimes(1);
+    });
+
+    it('returns the real schema (not a Proxy) when disabled', () => {
+      setLazySchemaDisabled(true);
+
+      const RawSchema = z.object({ id: z.string() });
+      const Schema = lazySchema(() => RawSchema);
+
+      // In disabled mode `lazySchema` just returns `factory()`, so the caller
+      // gets the exact Zod instance back — `instanceof` succeeds.
+      expect(Schema).toBe(RawSchema);
+      expect(Schema).toBeInstanceOf(z.ZodObject);
     });
   });
 });

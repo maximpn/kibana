@@ -20,6 +20,9 @@ import { TimelineType, PersistTimelineResponse } from '../model/components.gen';
 
 export const GetDraftTimelinesRequestQuery = lazySchema(() =>
   z.object({
+    /**
+     * Which draft to load (`default` investigation timeline or `template` timeline template).
+     */
     timelineType: TimelineType,
   })
 );
